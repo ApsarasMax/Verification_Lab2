@@ -11,6 +11,17 @@ package FSMProperties;
 
 /*place your property here*/
 
+ap1: assert property(@(posedge  i_clk) 
+                          (wishbone_st==WB_IDLE) |=> (wishbone_st==WB_IDLE) || (wishbone_st==WB_BURST1) || (wishbone_st==WB_WAIT_ACK);
+ap2: assert property(@(posedge  i_clk) 
+             (wishbone_st==WB_BURST1) ##0 (i_wb_ack) |=> (wishbone_st==WB_BURST2);
+ap3: assert property(@(posedge  i_clk) 
+             (wishbone_st==WB_BURST2) ##0 (i_wb_ack) |=> (wishbone_st==WB_BURST3);
+ap4: assert property(@(posedge  i_clk) 
+             (wishbone_st==WB_BURST3) ##0 (extra_write_r || !i_wb_ack) |=> (wishbone_st==WB_WAIT_ACK);
+ap5: assert property(@(posedge  i_clk) 
+             (wishbone_st==WB_WAIT_ACK) ##0 (!extra_write_r && i_wb_ack) |=> (wishbone_st==WB_BURST2);
+
 
 // FSMOutputValid
 // Function: Checks that FSM outputs have the right value for a given state
